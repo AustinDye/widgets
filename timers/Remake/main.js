@@ -2,21 +2,16 @@
 
 function test(){
     const timers = document.querySelectorAll('.make-timer');
-    for(let i = 0;i < timers.length; i++){
-        const timer = timers[i]
-      
-        const args = parseSettings(timer.innerText, ["csv", "hyphencamel"]);
-		let domList = [... document.querySelector('.make-timer').getElementsByTagName('li')];
-		let list = []
-		domList.forEach(Element => {
-			list.push(Element.innerHTML)
-		})
-
-		console.log(args)
-        const rotatingTimer = new RotatingTimer(null, args, list)
-        console.log(rotatingTimer)
-    }
+	for (const timer of timers) {
+		const args = parseSettings(timer.innerText, ["csv", "hyphencamel"]);
+		const list = Array.from(document.querySelector('.make-timer').getElementsByTagName('li'), li => li.innerHTML);
+	
+		console.log(args);
+		const rotatingTimer = new RotatingTimer(null, args, list);
+		console.log(rotatingTimer);
+	}
 }
+
 
 function parseSettings(settings, opts = []) {
 	const text = (settings + " ").match(/ +|[=,]|\{[^}]*\}|[^ ,=]+/g);
@@ -30,12 +25,14 @@ function parseSettings(settings, opts = []) {
 	const cases = [];
   
 	const parseString = () => {
+		
 	  let ret;
 	  if (currentString.startsWith("{")) {
 		const tmp = currentString.slice(1, -1).split("/");
 		ret = tmp.length === 1 ? tmp[0] : { string: tmp[0], extra: tmp.slice(1) };
 	  } else {
 		ret = currentString;
+		
 	  }
 	  currentString = "";
 	  return ret;
