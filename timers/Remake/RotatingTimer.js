@@ -1,12 +1,11 @@
-
-
 class RotatingTimer {
-  constructor(display, args, list ) {
-  
+  constructor(display, args) {
+    
     this.epoch = args.epoch
-    this.list = list
+    this.list = args.list
     this.changeAt = args["change-at"] || ""
     this.label = args.label
+    this.validateArgs(args)
   }
 
   testFunc(){
@@ -14,10 +13,9 @@ class RotatingTimer {
   }
 
   validateArgs(args) {
-
-    if (!epoch) throw new Error("Rotate type requires an 'epoch'.");
-    if (!changeAt && !changeEvery) throw new Error("Rotate type requires either change-at or change-every.");
-    if (changeAt && changeEvery) throw new Error("Rotate type cannot take both 'changeAt' and 'changeEvery'.");
+    if (!this.epoch) throw new Error("Rotate type requires an 'epoch'.");
+    if (!this.changeAt && !this.changeEvery) throw new Error("Rotate type requires either change-at or change-every.");
+    if (this.changeAt && this.changeEvery) throw new Error("Rotate type cannot take both 'changeAt' and 'changeEvery'.");
   }
 
   setupTimers() {
@@ -50,5 +48,4 @@ class RotatingTimer {
 
   // Additional methods as needed (e.g., `getNextChangeTime`, `parseChangeAtTime`)
 }
-
 
