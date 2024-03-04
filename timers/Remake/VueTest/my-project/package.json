@@ -9,8 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "date-fns": "^3.3.1",
+    "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
+    "tiny-emitter": "^2.1.0",
     "vue": "^3.4.19"
   },
   "devDependencies": {
