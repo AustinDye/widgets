@@ -1,5 +1,5 @@
 <script>
-import { parseISO, format, add, isAfter } from 'date-fns';
+import { parseISO, parse, format, add, isAfter, setHours, setMinutes, getHours, getMinutes } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import emitter from 'tiny-emitter/instance'
 import { onMounted, onBeforeUnmount } from 'vue';
@@ -31,14 +31,25 @@ export default{
       rotation: 0,
       lastUpdate: null,
       epoch: null,
-      eventBus: undefined
+      eventBus: undefined,
+      serverTimeZone: "America/Los_Angeles",
+      serverTime: undefined
     }
   },
   created() {
-    console.log(this.$props)
-    this.initializeEpoch()
-    this.scheduleChangeEvery()
-    this.scheduleChangeAt()
+    if(this.$props.args.changeAt){
+      console.log(this.$props);
+      this.initializeEpoch();
+      this.scheduleChangeEvery();
+      this.scheduleChangeAt();
+      console.log(this.erinnEntries);
+      this.erinnEntries.sort(() => {
+        this.parseTime(a, this.serverTime) - this.parseTime(b, this.serverTime)
+      });
+    }
+    if (erinnEntries.length) {
+      this.rotateErinn()
+    }
   },
 
   onMounted(){
@@ -125,13 +136,72 @@ export default{
       }
     },
 
+    parseTime(time, serverTime) {
+      console.log(time)
+      if (time.match(/E$/)) {
+          // Is Erinn time, returns in minutes
+          const mo = time.match(/^([0-9]{1,2}):([0-9]{2})E?$/);
+          if (!mo) return console.warn("Bad Erinn time: " + time);
+          return parseInt(mo[1], 10) * 60 + parseInt(mo[2], 10);
+      } else if (time.match(/S$/)) {
+          // Parse Server time of day
+          let serverDate = serverTime ? parseISO(serverTime) : new Date(); // Assuming serverTime is an ISO string or null
+
+          const [hours, minutes] = time.substr(0, time.length - 1).split(':').map(n => parseInt(n, 10));
+          serverDate = setHours(serverDate, hours);
+          serverDate = setMinutes(serverDate, minutes);
+
+          return getHours(serverDate) * 60 + getMinutes(serverDate);
+      } else {
+          // Parse time of day with TZ
+          const dateString = new Date().toISOString().slice(0, 11) + time; // Prepend current date to ensure correct parsing
+          const t = parseISO(dateString);
+
+          return getHours(t) * 60 + getMinutes(t);
+      }
+    },
+
+    getServerTime() {
+      const now = new Date();
+      const zonedTime = utcToZonedTime(now, this.serverTimeZone); 
+      this.serverTimer = format(zonedTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: this.serverTimeZone });
+    },
+
+    rotateErinn(){
+      const ete = getErinnTime(epoch);
+      const etn = getErinnTime(stn);
+      let rotation = 0;
+
+      // Find all Erinn-time changes between the epoch and Erinn's midnight.
+      erinnEntries.forEach((entry) => {
+ 
+      });
+
+      // Find all Erinn-time changes between Erinn's midnight and now.
+      erinnEntries.forEach((entry) => {
+     
+      });
+
+      // Add rotation for every Erinn day passed wrt the number of changes per day.
+
+
+    },
+
+    getErinnTime(){
+      if (serverTime) {
+      // Convert serverTime to a Date object if it's not already one
+      const time = typeof serverTime === 'string' ? parseISO(serverTime) : serverTime;
+      
+      // Convert time to UTC and calculate minutes since epoch
+  
+    },
 
     initializeChangeAt(){
 
     }
-    // Add other methods to manipulate erinnEntries, realEntries, etc. as needed
+  
   },
-  // might also use computed properties or watchers depending on how you want to react to changes in your data
+  // might also use computed properties or watchers depending on how we want to react to changes in our data
 }
 
 </script>
